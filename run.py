@@ -6,23 +6,31 @@ import sender
 import os
 import time
 import random
+import argparse
+import json
 
-app_id = 5037590
+app_id = 5931763
 
 group_list = ['Игры для слабых ПК', 'Игры для мощных ПК']
 group_ids = [53524685, 65820735]
 
-def post(url, group_id):
+def getSettings():
+    with open('prefs.json', encoding='UTF-8') as data_file:
+        data = json.load(data_file)
+    return data
+
+
+def post(tracker_url, group_id):
     last_post = saver.openPref('me', 'post_id', 0)
     if not os.path.exists('data'):
         os.mkdir('data/'.format(last_post))
     if not os.path.exists('data/{}'.format(last_post)):
         os.mkdir('data/{}'.format(last_post))
     permissions = ['offline', 'wall', 'docs', 'photos']
-    if 'rutracker' in url:
-        page = rutracker.grabPage(url)
+    if 'rutracker' in tracker_url:
+        page = rutracker.grabPage(tracker_url)
     elif 'rutor':
-        page = rutor.grabPage(url)
+        page = rutor.grabPage(tracker_url)
     torrent_file = {'file':
                         open(rutracker.downloadFile('data/{}'.format(last_post), 'torrent_1.torrent', page.torrent_url),
                              'rb')}
@@ -62,21 +70,33 @@ def post(url, group_id):
     postphone = random.randint(60 * 60 * 18, 60 * 60 * 31)
     if len(posts['items']) > 0:
         postphone += posts['items'][-1]['date'] - time.time()
-    print(time.time() + postphone)
     api.wall.post(owner_id=-group_id, signed=1, attachments=attachments, message=page.title + '\n' + page.description,
                   publish_date=time.time() + postphone)
 
 if __name__ == "__main__":
-    print('В консоли вставка делается с помощью shift+ins(или ctrl+v в Win 10)')
-    url = input('Вставь URL на трекер: ')
-    print('Выбери группу:')
+    settings = getSettings()
+    app_id = settings['app_id']
+    parser = argparse.ArgumentParser()
+    group_list = settings['group_list']
+    group_ids = settings['group_ids']
+
+    parser.add_argument("url", type=str,
+                        help="URL on tracker", nargs='?', default=None)
+    args = parser.parse_args()
+    if args.url:
+        url = args.url
+    else:
+        print(settings['messages']['paste_tip'])
+        url = input(settings['messages']['enter_url'])
+
+    print(settings['messages']['pick_a_group'])
     gid = 0
     for group in group_list:
         print('{}. {}'.format(gid+1, group))
         gid += 1
     group = -1
 
-    group = int(input('Введи номер: '))
+    group = int(input(settings['messages']['pick_a_number']))
     group -= 1
     post(url, group_ids[group])
 

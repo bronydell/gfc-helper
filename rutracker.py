@@ -61,7 +61,6 @@ def downloadFile(path, filename, url):
     response = requests.get(url, stream=True, cookies=auth_cookie)
     if 'content-disposition' in response.headers:
         d = response.headers['content-disposition']
-        print(d)
         filename = re.findall("filename=(.+)", d)[0][1:-1]
     filename = path + '/' + filename
     with open(filename, 'wb') as out_file:
