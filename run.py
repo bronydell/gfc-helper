@@ -8,17 +8,44 @@ import time
 import random
 import argparse
 import json
+import requests
+import zipfile
+import sys
+import io
 
 app_id = 5931763
 
 group_list = ['Игры для слабых ПК', 'Игры для мощных ПК']
 group_ids = [53524685, 65820735]
+__version__ = 2
+
 
 def getSettings():
     with open('prefs.json', encoding='UTF-8') as data_file:
         data = json.load(data_file)
     return data
 
+
+def getVersionsInfo():
+    try:
+        return requests.get(getSettings()['update_url']).json()
+    except:
+        return None
+
+
+def extractZipFromURL(url):
+    r = requests.get(url)
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    z.extractall()
+
+def update():
+    version_info = getVersionsInfo()
+    if version_info is not None and version_info['versions'] is not None:
+        version_info = version_info['versions'][-1]
+        if version_info['version'] > __version__:
+            print('Качаем обновление. Перезапустите скрипт')
+            extractZipFromURL(version_info['url'])
+            os.execl(sys.executable, sys.executable, *sys.argv)
 
 def post(tracker_url, group_id):
     last_post = saver.openPref('me', 'post_id', 0)
@@ -74,6 +101,8 @@ def post(tracker_url, group_id):
                   publish_date=time.time() + postphone)
 
 if __name__ == "__main__":
+
+    update()
     settings = getSettings()
     app_id = settings['app_id']
     parser = argparse.ArgumentParser()
