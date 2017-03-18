@@ -18,9 +18,8 @@ def parse(link):
         return req.url
     html = req.content
     soup = BeautifulSoup(html, "html.parser")
-    name = find_between(link, '/', '.jpg')
+    name = find_between(link, '/', '.')
     for img in soup.find_all('img'):
-        print(img['src'])
         if name in img['src']:
             return img['src']
     return None
