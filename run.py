@@ -17,7 +17,7 @@ app_id = 5931763
 
 group_list = ['Игры для слабых ПК', 'Игры для мощных ПК']
 group_ids = [53524685, 65820735]
-__version__ = 4
+__version__ = 5
 
 
 def getSettings():
