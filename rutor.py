@@ -6,15 +6,6 @@ import re
 import saver
 import sender
 
-hosts = [
-    "fastpic.ru",
-    "radikal.ru"
-]
-not_hosts = [
-    "http://fastpic.ru/",
-    "http://radikal.ru/"
-]
-
 
 class Page:
     title = ''
@@ -37,7 +28,7 @@ def grabPage(url):
     pg.title = soup.find('div', {'id':'all'}).find('h1').text
     pg.post_cover = description.find('img')['src']
     for link in description.findAll('a'):
-        if any(x in link['href'] for x in hosts) and all(x != link['href'] for x in not_hosts) and link.find('img'):
+        if any(x in link['href'] for x in image_hosts.hosts) and all(x != link['href'] for x in image_hosts.not_hosts) and link.find('img'):
             img_url = image_hosts.parse(link['href'])
             if img_url:
                 pg.images_urls.append(img_url)

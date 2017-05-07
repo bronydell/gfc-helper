@@ -1,0 +1,18 @@
+{
+  "messages": {
+    "paste_tip": "В консоли вставка делается с помощью shift+ins(или ctrl+v в Win 10)",
+    "enter_url": "Введите URL на трекер: ",
+    "pick_a_group": "Выбери группу: ",
+    "pick_a_number": "Введи номер: "
+  },
+  "app_id": 5931763,
+  "update_url": "https://games.bronydell.xyz/xj9/versions.json",
+  "group_list": [
+    "Игры для слабых ПК",
+    "Игры для мощных ПК"
+  ],
+  "group_ids": [
+    53524685,
+    65820735
+  ]
+}

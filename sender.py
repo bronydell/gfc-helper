@@ -7,7 +7,6 @@ def createPoll(api, question, options, group_id):
 
 def sendDoc(api, file):
     resp = api.docs.getUploadServer()
-    print(file)
     r = requests.post(resp['upload_url'], files=file)
     resp = r.json()
     resp = api.docs.save(file=resp['file'])

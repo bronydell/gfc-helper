@@ -6,14 +6,7 @@ import re
 import saver
 import sender
 
-hosts = [
-    "fastpic.ru",
-    "radikal.ru"
-]
-not_hosts = [
-    "http://fastpic.ru/",
-    "http://radikal.ru/"
-]
+
 
 auth_cookie = {
     "bb_session": "0-11316112-LRS6cAJJBrudES3zPyMm",
@@ -39,11 +32,10 @@ def grabPage(url):
 
     pg.title = ''
     for link in description.findAll('a', {'class': 'postLink'}):
-        if any(x in link['href'] for x in hosts) and all(x != link['href'] for x in not_hosts) and link.find('var'):
+        if any(x in link['href'] for x in image_hosts.hosts) and all(x != link['href'] for x in image_hosts.not_hosts) and link.find('var'):
             img_url = image_hosts.parse(link['href'])
             if img_url:
                 pg.images_urls.append(img_url)
-
     for match in description.findAll('div', {'class': 'sp-wrap'}):
         match.replaceWith('')
     url = soup.find('a', {'class': 'dl-stub'})
@@ -61,7 +53,6 @@ def downloadFile(path, filename, url):
     response = requests.get(url, stream=True, cookies=auth_cookie)
     if 'content-disposition' in response.headers:
         d = response.headers['content-disposition']
-        print(d)
         filename = re.findall("filename=(.+)", d)[0][1:-1]
     filename = path + '/' + filename
     with open(filename, 'wb') as out_file:
